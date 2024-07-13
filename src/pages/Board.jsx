@@ -21,6 +21,10 @@ const initialData = {
   converted: [],
 };
 
+function capitalizeWords(str) {
+  return str.replace(/([A-Z])/g, " $1").trim().replace(/\b\w/g, char => char.toUpperCase());
+}
+
 function DraggableItem({ id, title, description, image, borderColor }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useDraggable({
     id,
@@ -50,7 +54,7 @@ function DroppableContainer({ id, items, children, horizontal = false }) {
   };
 
   return (
-    <div ref={setNodeRef} className={`bg-gray-800 p-4 rounded-lg ${horizontal ? 'flex space-x-4 overflow-x-auto' : 'min-h-[400px] flex flex-col space-y-4'}`}>
+    <div ref={setNodeRef} className={`bg-gray-800 p-4 rounded-lg items-center ${horizontal ? 'flex space-x-4 overflow-x-auto' : 'min-h-[400px] flex flex-col space-y-4'}`}>
       {children}
       <SortableContext items={Array.isArray(items) ? items : []} strategy={horizontal ? horizontalListSortingStrategy : verticalListSortingStrategy}>
         {Array.isArray(items) ? items.map((item) => (
@@ -76,12 +80,12 @@ function Board() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://40.118.175.224/items");
+        const response = await fetch("/items");
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const result = await response.json();
-        console.log("Fetched data:", result); 
+        console.log("Fetched data:", result); // Log the fetched data
         if (Array.isArray(result)) {
           setData((prevData) => ({
             ...prevData,
@@ -169,7 +173,7 @@ function Board() {
           {["notInterested", "visitLater", "converted"].map((key) => (
             <DroppableContainer key={key} id={key} items={data[key]}>
               <h2 className="text-white text-xl mb-4">
-                {key.replace(/([A-Z])/g, " $1").trim()}
+                {capitalizeWords(key)}
               </h2>
             </DroppableContainer>
           ))}
