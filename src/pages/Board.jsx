@@ -12,7 +12,7 @@ import {
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import Card from "./Card";
+import Card from "../components/Card";
 
 const initialData = {
   allCards: [],
@@ -80,12 +80,12 @@ function Board() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("/items");
+        const response = await fetch("http://40.118.175.224/items");
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const result = await response.json();
-        console.log("Fetched data:", result); // Log the fetched data
+        console.log("Fetched data:", result);
         if (Array.isArray(result)) {
           setData((prevData) => ({
             ...prevData,
